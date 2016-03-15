@@ -1,6 +1,6 @@
 {
-  "name": "react-select",
-  "version": "1.0.0-beta11",
+  "name": "react-select-allow-create",
+  "version": "1.0.0-beta11.6",
   "description": "A Select control built with and for ReactJS",
   "main": "lib/Select.js",
   "style": "dist/react-select.min.css",
@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JedWatson/react-select.git"
+    "url": "git+https://github.com/JedWatson/react-select.git"
   },
   "dependencies": {
     "classnames": "^2.2.3",
@@ -70,5 +70,13 @@
     "react-component",
     "select",
     "ui"
-  ]
+  ],
+  "bugs": {
+    "url": "https://github.com/JedWatson/react-select/issues"
+  },
+  "homepage": "https://github.com/JedWatson/react-select#readme",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  }
 }
