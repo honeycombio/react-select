@@ -542,9 +542,11 @@ const Select = React.createClass({
 	},
 
 	selectFocusedOption () {
-		// if (this.props.allowCreate && !this.state.focusedOption) {
-		// 	return this.selectValue(this.state.inputValue);
-		// }
+    var options = this.filterOptions(null);
+    var validOption = this.state.focusedOption && options.length > 0;
+		if (this.props.allowCreate && !validOption) {
+			return this.selectValue(this.state.inputValue);
+		}
 		if (this._focusedOption) {
 			return this.selectValue(this._focusedOption);
 		}
