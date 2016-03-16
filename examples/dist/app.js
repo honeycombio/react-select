@@ -1634,7 +1634,7 @@ var Select = _react2['default'].createClass({
 
 	selectFocusedOption: function selectFocusedOption() {
 		var options = this.filterOptions(null);
-		var validOption = this.state.focusedOption && options.length > 0;
+		var validOption = this._focusedOption && options.length > 0;
 		if (this.props.allowCreate && !validOption) {
 			return this.selectValue(this.state.inputValue);
 		}
