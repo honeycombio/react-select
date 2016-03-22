@@ -1120,6 +1120,7 @@ var Select = _react2['default'].createClass({
 		escapeClearsValue: _react2['default'].PropTypes.bool, // whether escape clears the value when the menu is closed
 		filterOption: _react2['default'].PropTypes.func, // method to filter a single option (option, filterString)
 		filterOptions: _react2['default'].PropTypes.any, // boolean to enable default filtering or function to filter the options array ([options], filterString, [values])
+		focusedInputValue: _react2['default'].PropTypes.func, // function(value) {} to ensure populated input on focus
 		ignoreAccents: _react2['default'].PropTypes.bool, // whether to strip diacritics when filtering
 		ignoreCase: _react2['default'].PropTypes.bool, // whether to perform case-insensitive filtering
 		inputProps: _react2['default'].PropTypes.object, // custom attributes for the Input
@@ -1213,6 +1214,14 @@ var Select = _react2['default'].createClass({
 	componentDidMount: function componentDidMount() {
 		if (this.props.autofocus) {
 			this.focus();
+		}
+	},
+
+	componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+		if (this.props.value !== nextProps.value && nextProps.required) {
+			this.setState({
+				required: this.handleRequired(nextProps.value, nextProps.multi)
+			});
 		}
 	},
 
@@ -1372,10 +1381,14 @@ var Select = _react2['default'].createClass({
 		if (this.props.onFocus) {
 			this.props.onFocus(event);
 		}
-		this.setState({
+		var state = {
 			isFocused: true,
 			isOpen: isOpen
-		});
+		};
+		if (this.props.focusedInputValue && !this.props.multi) {
+			state.inputValue = this.props.focusedInputValue(this.props.value);
+		}
+		this.setState(state);
 		this._openAfterFocus = false;
 	},
 
