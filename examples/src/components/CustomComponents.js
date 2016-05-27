@@ -1,5 +1,5 @@
 import React from 'react';
-import Select from 'react-select';
+import Select from 'react-select-allow-create';
 import Gravatar from 'react-gravatar';
 
 const USERS = require('../data/users');
