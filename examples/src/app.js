@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Select from 'react-select';
+import Select from 'react-select-allow-create';
 
 import Contributors from './components/Contributors';
 import CustomComponents from './components/CustomComponents';
