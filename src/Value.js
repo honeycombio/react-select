@@ -85,9 +85,11 @@ const Value = React.createClass({
 			<div className={classNames('Select-value', this.props.value.className)}
 				style={this.props.value.style}
 				title={this.props.value.title}
-				>
-				{this.renderRemoveIcon()}
-				{this.renderLabel()}
+		                >
+		                <div className='Select-value-inner'>
+				        {this.renderRemoveIcon()}
+				        {this.renderLabel()}
+		                </div>
 			</div>
 		);
 	}
