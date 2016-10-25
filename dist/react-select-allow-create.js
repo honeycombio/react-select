@@ -869,9 +869,10 @@ var Select = _react2['default'].createClass({
 		valueComponent: _react2['default'].PropTypes.func, // value component to render
 		valueKey: _react2['default'].PropTypes.string, // path of the label value in option objects
 		valueRenderer: _react2['default'].PropTypes.func, // valueRenderer: function (option) {}
-		wrapperStyle: _react2['default'].PropTypes.object },
+		wrapperStyle: _react2['default'].PropTypes.object, // optional style to apply to the component wrapper
+		inputValue: _react2['default'].PropTypes.string
+	},
 
-	// optional style to apply to the component wrapper
 	statics: { Async: _Async2['default'], AsyncCreatable: _AsyncCreatable2['default'], Creatable: _Creatable2['default'] },
 
 	getDefaultProps: function getDefaultProps() {
@@ -912,13 +913,14 @@ var Select = _react2['default'].createClass({
 			simpleValue: false,
 			tabSelectsValue: true,
 			valueComponent: _Value2['default'],
-			valueKey: 'value'
+			valueKey: 'value',
+			inputValue: ''
 		};
 	},
 
 	getInitialState: function getInitialState() {
 		return {
-			inputValue: '',
+			inputValue: this.props.inputValue,
 			isFocused: false,
 			isOpen: false,
 			isPseudoFocused: false,
@@ -950,6 +952,9 @@ var Select = _react2['default'].createClass({
 			this.setState({
 				required: this.handleRequired(valueArray[0], nextProps.multi)
 			});
+		}
+		if (nextProps.inputValue !== '') {
+			this.setState({ inputValue: nextProps.inputValue });
 		}
 	},
 
