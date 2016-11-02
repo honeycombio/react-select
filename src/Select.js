@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import defaultArrowRenderer from './utils/defaultArrowRenderer';
 import defaultFilterOptions from './utils/defaultFilterOptions';
 import defaultMenuRenderer from './utils/defaultMenuRenderer';
+import measure from './utils/measure';
 
 import Async from './Async';
 import AsyncCreatable from './AsyncCreatable';
@@ -113,6 +114,8 @@ const Select = React.createClass({
 		valueRenderer: React.PropTypes.func,        // valueRenderer: function (option) {}
 		wrapperStyle: React.PropTypes.object,       // optional style to apply to the component wrapper
 	        inputValue: React.PropTypes.string,
+                autoSizeMenu: React.PropTypes.bool,
+                autoSizeMenuMaxWidth: React.PropTypes.number,
 	},
 
 	statics: { Async, AsyncCreatable, Creatable },
@@ -157,6 +160,7 @@ const Select = React.createClass({
 			valueComponent: Value,
 			valueKey: 'value',
 		        inputValue: '',
+		        autoSizeMenu: false,
 		};
 	},
 
@@ -200,46 +204,79 @@ const Select = React.createClass({
 		}
 	},
 
-	componentWillUpdate (nextProps, nextState) {
-		if (nextState.isOpen !== this.state.isOpen) {
-			this.toggleTouchOutsideEvent(nextState.isOpen);
-			const handler = nextState.isOpen ? nextProps.onOpen : nextProps.onClose;
-			handler && handler();
-		}
-	},
+        componentWillUpdate (nextProps, nextState) {
+                let needMeasure = false;
+                if (nextState.isOpen !== this.state.isOpen) {
+                        this.toggleTouchOutsideEvent(nextState.isOpen);
+                        const handler = nextState.isOpen ? nextProps.onOpen : nextProps.onClose;
+                        handler && handler();
 
-	componentDidUpdate (prevProps, prevState) {
-		// focus to the selected option
-		if (this.menu && this.focused && this.state.isOpen && !this.hasScrolledToOption) {
-			let focusedOptionNode = ReactDOM.findDOMNode(this.focused);
-			let menuNode = ReactDOM.findDOMNode(this.menu);
-			menuNode.scrollTop = focusedOptionNode.offsetTop;
-			this.hasScrolledToOption = true;
-		} else if (!this.state.isOpen) {
-			this.hasScrolledToOption = false;
-		}
+                        if (nextState.isOpen && nextProps.autoSizeMenu) {
+                            needMeasure = true;
+                        }
+                }
 
-		if (this._scrollToFocusedOptionOnUpdate && this.focused && this.menu) {
-			this._scrollToFocusedOptionOnUpdate = false;
-			var focusedDOM = ReactDOM.findDOMNode(this.focused);
-			var menuDOM = ReactDOM.findDOMNode(this.menu);
-			var focusedRect = focusedDOM.getBoundingClientRect();
-			var menuRect = menuDOM.getBoundingClientRect();
-			if (focusedRect.bottom > menuRect.bottom || focusedRect.top < menuRect.top) {
-				menuDOM.scrollTop = (focusedDOM.offsetTop + focusedDOM.clientHeight - menuDOM.offsetHeight);
-			}
-		}
-		if (this.props.scrollMenuIntoView && this.menuContainer) {
-			var menuContainerRect = this.menuContainer.getBoundingClientRect();
-			if (window.innerHeight < menuContainerRect.bottom + this.props.menuBuffer) {
-				window.scrollBy(0, menuContainerRect.bottom + this.props.menuBuffer - window.innerHeight);
-			}
-		}
-		if (prevProps.disabled !== this.props.disabled) {
-			this.setState({ isFocused: false }); // eslint-disable-line react/no-did-update-set-state
-			this.closeMenu();
-		}
-	},
+                if (nextProps.autoSizeMenu !== this.props.autoSizeMenu) {
+                    if (nextProps.autoSizeMenu) {
+                        needMeasure = true;
+                    } else {
+                        this.setState({ menuWidth: undefined });
+                    }
+                }
+
+                if (nextProps.autoSizeMenu && nextProps.options !== this.props.options) {
+                    needMeasure = true;
+                }
+
+                if (needMeasure) {
+                    let valueArray = this.getValueArray(this.props.value);
+                    let options =       this._visibleOptions = this.filterOptions(this.props.multi ? this.getValueArray(this.props.value) : null);
+                    const focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
+                    let focusedOption = null;
+                    if (focusedOptionIndex !== null) {
+                        focusedOption = this._focusedOption = options[focusedOptionIndex];
+                    } else {
+                        focusedOption = this._focusedOption = null;
+                    }
+                    let inner = this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption, true);
+                    let { width } = measure(this, inner);
+                    this.setState({ menuWidth: width });
+                }
+
+        },
+
+        componentDidUpdate (prevProps, prevState) {
+                // focus to the selected option
+                if (this.menu && this.focused && this.state.isOpen && !this.hasScrolledToOption) {
+                        let focusedOptionNode = ReactDOM.findDOMNode(this.focused);
+                        let menuNode = ReactDOM.findDOMNode(this.menu);
+                        menuNode.scrollTop = focusedOptionNode.offsetTop;
+                        this.hasScrolledToOption = true;
+                } else if (!this.state.isOpen) {
+                        this.hasScrolledToOption = false;
+                }
+
+                if (this._scrollToFocusedOptionOnUpdate && this.focused && this.menu) {
+                        this._scrollToFocusedOptionOnUpdate = false;
+                        var focusedDOM = ReactDOM.findDOMNode(this.focused);
+                        var menuDOM = ReactDOM.findDOMNode(this.menu);
+                        var focusedRect = focusedDOM.getBoundingClientRect();
+                        var menuRect = menuDOM.getBoundingClientRect();
+                        if (focusedRect.bottom > menuRect.bottom || focusedRect.top < menuRect.top) {
+                                menuDOM.scrollTop = (focusedDOM.offsetTop + focusedDOM.clientHeight - menuDOM.offsetHeight);
+                        }
+                }
+                if (this.props.scrollMenuIntoView && this.menuContainer) {
+                        var menuContainerRect = this.menuContainer.getBoundingClientRect();
+                        if (window.innerHeight < menuContainerRect.bottom + this.props.menuBuffer) {
+                                window.scrollBy(0, menuContainerRect.bottom + this.props.menuBuffer - window.innerHeight);
+                        }
+                }
+                if (prevProps.disabled !== this.props.disabled) {
+                        this.setState({ isFocused: false }); // eslint-disable-line react/no-did-update-set-state
+                        this.closeMenu();
+                }
+        },
 
 	componentWillUnmount() {
 		if (!document.removeEventListener && document.detachEvent) {
@@ -1029,23 +1066,37 @@ const Select = React.createClass({
 		return null;
 	},
 
-	renderOuter (options, valueArray, focusedOption) {
-		let menu = this.renderMenu(options, valueArray, focusedOption);
-		if (!menu) {
-			return null;
-		}
+        renderOuter (options, valueArray, focusedOption, excludeAutoWidth) {
+                let menu = this.renderMenu(options, valueArray, focusedOption);
+                if (!menu) {
+                        return null;
+                }
 
-		return (
-			<div ref={ref => this.menuContainer = ref} className="Select-menu-outer" style={this.props.menuContainerStyle}>
-				<div ref={ref => this.menu = ref} role="listbox" className="Select-menu" id={this._instancePrefix + '-list'}
-						 style={this.props.menuStyle}
-						 onScroll={this.handleMenuScroll}
-						 onMouseDown={this.handleMouseDownOnMenu}>
-					{menu}
-				</div>
-			</div>
-		);
-	},
+                let inner = (
+                    <div ref={ref => this.menu = ref} role="listbox" className="Select-menu" id={this._instancePrefix + '-list'}
+                         style={this.props.menuStyle}
+                         onScroll={this.handleMenuScroll}
+                         onMouseDown={this.handleMouseDownOnMenu}>
+                        {menu}
+                    </div>
+                );
+
+	        let style;
+                if (!excludeAutoWidth && this.state.menuWidth) {
+                  style = { width: this.state.menuWidth };
+                  if (this.props.autoSizeMenuMaxWidth) {
+                    style.maxWidth = this.props.autoSizeMenuMaxWidth;
+		  }
+                  style = Object.assign(style, this.props.menuContainerStyle);
+                } else {
+                  style = this.props.menuContainerStyle;
+                }
+                return (
+                    <div ref={ref => this.menuContainer = ref} className="Select-menu-outer" style={style}>
+                        { inner }
+                    </div>
+                );
+        },
 
 	render () {
 		let valueArray = this.getValueArray(this.props.value);
