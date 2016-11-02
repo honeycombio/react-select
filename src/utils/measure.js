@@ -99,8 +99,6 @@ export default function measure(parentComponent, rendered) {
       width: _div.clientWidth
     };
 
-  console.log(_div.innerHTML);
-  
     ReactDOM.unmountComponentAtNode(_div);
     return measurement;
 };

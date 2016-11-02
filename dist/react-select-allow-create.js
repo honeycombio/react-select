@@ -2352,8 +2352,6 @@ function measure(parentComponent, rendered) {
     width: _div.clientWidth
   };
 
-  console.log(_div.innerHTML);
-
   _reactDom2['default'].unmountComponentAtNode(_div);
   return measurement;
 }
