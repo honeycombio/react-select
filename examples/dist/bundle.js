@@ -1363,7 +1363,6 @@ var Select = _react2['default'].createClass({
 		}
 
 		if (needMeasure) {
-			console.log("measuring!");
 			var valueArray = this.getValueArray(this.props.value);
 			var options = this._visibleOptions = this.filterOptions(this.props.multi ? this.getValueArray(this.props.value) : null);
 			var focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
@@ -1379,7 +1378,6 @@ var Select = _react2['default'].createClass({
 
 			var width = _measure.width;
 
-			console.log('width = ' + width);
 			this.setState({ menuWidth: width });
 		}
 	},
