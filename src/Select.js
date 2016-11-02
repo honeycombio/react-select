@@ -12,7 +12,6 @@ import classNames from 'classnames';
 import defaultArrowRenderer from './utils/defaultArrowRenderer';
 import defaultFilterOptions from './utils/defaultFilterOptions';
 import defaultMenuRenderer from './utils/defaultMenuRenderer';
-import measure from './utils/measure';
 
 import Async from './Async';
 import AsyncCreatable from './AsyncCreatable';
@@ -114,8 +113,6 @@ const Select = React.createClass({
 		valueRenderer: React.PropTypes.func,        // valueRenderer: function (option) {}
 		wrapperStyle: React.PropTypes.object,       // optional style to apply to the component wrapper
 	        inputValue: React.PropTypes.string,
-                autoSizeMenu: React.PropTypes.bool,
-                autoSizeMenuMaxWidth: React.PropTypes.number,
 	},
 
 	statics: { Async, AsyncCreatable, Creatable },
@@ -160,7 +157,6 @@ const Select = React.createClass({
 			valueComponent: Value,
 			valueKey: 'value',
 		        inputValue: '',
-		        autoSizeMenu: false,
 		};
 	},
 
@@ -205,44 +201,11 @@ const Select = React.createClass({
 	},
 
         componentWillUpdate (nextProps, nextState) {
-                let needMeasure = false;
                 if (nextState.isOpen !== this.state.isOpen) {
                         this.toggleTouchOutsideEvent(nextState.isOpen);
                         const handler = nextState.isOpen ? nextProps.onOpen : nextProps.onClose;
                         handler && handler();
-
-                        if (nextState.isOpen && nextProps.autoSizeMenu) {
-                            needMeasure = true;
-                        }
                 }
-
-                if (nextProps.autoSizeMenu !== this.props.autoSizeMenu) {
-                    if (nextProps.autoSizeMenu) {
-                        needMeasure = true;
-                    } else {
-                        this.setState({ menuWidth: undefined });
-                    }
-                }
-
-                if (nextProps.autoSizeMenu && nextProps.options !== this.props.options) {
-                    needMeasure = true;
-                }
-
-                if (needMeasure) {
-                    let valueArray = this.getValueArray(this.props.value);
-                    let options =       this._visibleOptions = this.filterOptions(this.props.multi ? this.getValueArray(this.props.value) : null);
-                    const focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
-                    let focusedOption = null;
-                    if (focusedOptionIndex !== null) {
-                        focusedOption = this._focusedOption = options[focusedOptionIndex];
-                    } else {
-                        focusedOption = this._focusedOption = null;
-                    }
-                    let inner = this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption, true);
-                    let { width } = measure(this, inner);
-                    this.setState({ menuWidth: width });
-                }
-
         },
 
         componentDidUpdate (prevProps, prevState) {
@@ -1066,7 +1029,7 @@ const Select = React.createClass({
 		return null;
 	},
 
-        renderOuter (options, valueArray, focusedOption, excludeAutoWidth) {
+        renderOuter (options, valueArray, focusedOption) {
                 let menu = this.renderMenu(options, valueArray, focusedOption);
                 if (!menu) {
                         return null;
@@ -1081,18 +1044,8 @@ const Select = React.createClass({
                     </div>
                 );
 
-	        let style;
-                if (!excludeAutoWidth && this.state.menuWidth) {
-                  style = { width: this.state.menuWidth };
-                  if (this.props.autoSizeMenuMaxWidth) {
-                    style.maxWidth = this.props.autoSizeMenuMaxWidth;
-		  }
-                  style = Object.assign(style, this.props.menuContainerStyle);
-                } else {
-                  style = this.props.menuContainerStyle;
-                }
                 return (
-                    <div ref={ref => this.menuContainer = ref} className="Select-menu-outer" style={style}>
+                    <div ref={ref => this.menuContainer = ref} className="Select-menu-outer" style={this.props.menuContainerStyle}>
                         { inner }
                     </div>
                 );
