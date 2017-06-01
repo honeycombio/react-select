@@ -538,6 +538,8 @@ const Select = React.createClass({
 
 	handleValueClick (option, event) {
 		if (!this.props.onValueClick) return;
+		this.removeValue(option);
+		this.setState({ inputValue: option.label });
 		this.props.onValueClick(option, event);
 	},
 
