@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JedWatson/react-select.git"
+    "url": "git+https://github.com/honeycombio/react-select.git"
   },
   "dependencies": {
     "classnames": "^2.2.4",
@@ -76,10 +76,7 @@
     "select",
     "ui"
   ],
-  "bugs": {
-    "url": "https://github.com/JedWatson/react-select/issues"
-  },
-  "homepage": "https://github.com/JedWatson/react-select#readme",
+  "homepage": "https://github.com/honeycombio/react-select#readme",
   "directories": {
     "example": "examples",
     "test": "test"
