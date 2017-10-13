@@ -20,7 +20,7 @@ jsdomHelper();
 
 var React = require('react');
 var ReactDOM = require('react-dom');
-var TestUtils = require('react-addons-test-utils');
+var TestUtils = require('react-dom/test-utils');
 
 var Select = require('../src/Select');
 var Value = require('../src/Value');
@@ -2608,7 +2608,7 @@ describe('Select', () => {
 			// 	});
 			//
 			// 	it('makes the input readonly', () => {
-			// 		expect(React.findDOMNode(instance),
+			// 		expect(ReactDOM.findDOMNode(instance),
 			// 			'queried for first', 'input.Select-input',
 			// 			'to have attribute', 'readonly');
 			// 	});
