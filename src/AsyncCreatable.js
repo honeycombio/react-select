@@ -1,7 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import Select from './Select';
 
-const AsyncCreatable = React.createClass({
+const AsyncCreatable = createReactClass({
 	displayName: 'AsyncCreatableSelect',
 
 	render () {
