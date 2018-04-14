@@ -7,6 +7,25 @@ React-Select
 
 A Select control built with and for [React](http://facebook.github.io/react/index.html). Initially built for use in [KeystoneJS](http://www.keystonejs.com).
 
+## Why does this Honeycomb fork exist?
+
+Because at the time, certain behaviors were required and behaved strangely in the upstream version.
+
+These behaviors seem like they've been addressed by the upstream version (as of 2018/04/14):
+
+- Clicking on a filter removes the previous filter and turns it into edit mode (relies on https://github.com/honeycombio/react-select/commit/1cafc279434c13c448c5552ee61e41040c22a501, used by https://github.com/honeycombio/hound/commit/ac812787)
+- Generating/supporting options on the fly (relies on https://github.com/honeycombio/react-select/commit/5342544043158d7333b16aa27272ea04bc397dfa)
+
+These still seems like issues (aka, blindly s/react-select-allow-create/react-select/ in our repo causes these issues):
+
+> - the query builder behavior gets a little funky. e.g. try to type count in the calculate field and see that each character typed replaces the prior one (via @eanakashima)
+
+Still to be verified:
+
+- Being able to use a flexbox inside a `Select-value` https://github.com/honeycombio/react-select/commit/e69d7b89c8152d9a36247dc6c1579b4d0035c757, and autosizing behavior again https://github.com/honeycombio/react-select/commit/ea66e133b48479f8fa7b1f5119b9fa8c7312555a
+  - (@toshok thinks this one "was to keep the "x" in the pill from wrapping to the next line. Selecting a wide column name / entering a wide filter expression should trigger it.")
+- add an inputValue prop so container can supply an input value as the user chooses options https://github.com/honeycombio/react-select/commit/e61ad3a0a5355a0aba28c0be9eb63360ac40c4ca
+  - (@toshok thinks this "was to allow the dropdown to expand further to the right instead of only being as wide as the text entry. For verification dropping down the breakdown menu in a dataset with wide columns." and "I think this was to get the filter dropdown to work. selecting an option that doesn't give you a "complete" value (say, typing `total` and then selecting `total_duration_ms >= ?` sets the input value to `total_duration_ms >= `)")
 
 ## New version 1.0.0-rc
 
