@@ -1,6 +1,6 @@
 {
   "name": "react-select-allow-create",
-  "version": "1.0.0-beta11.18",
+  "version": "1.0.0-beta11.19",
   "description": "A Select control built with and for ReactJS",
   "main": "lib/Select.js",
   "style": "dist/react-select.min.css",
@@ -28,7 +28,7 @@
     "jsdom": "^9.5.0",
     "mocha": "^3.0.2",
     "prop-types": "^15.6.0",
-    "react": "^15.0",
+    "react": "^16.0",
     "react-addons-shallow-compare": "^15.6",
     "react-addons-test-utils": "^15.0",
     "react-component-gulp-tasks": "^0.7.7",
@@ -44,8 +44,8 @@
     "unexpected-sinon": "^10.4.0"
   },
   "peerDependencies": {
-    "react": "^0.14 || ^15.0.0-rc || ^15.0",
-    "react-dom": "^0.14 || ^15.0.0-rc || ^15.0"
+    "react": "^0.14 || ^15.0.0-rc || ^15.0 || ^16.0",
+    "react-dom": "^0.14 || ^15.0.0-rc || ^15.0 || ^16.0"
   },
   "browserify-shim": {
     "classnames": "global:classNames",
