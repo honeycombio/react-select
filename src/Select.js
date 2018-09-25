@@ -105,6 +105,7 @@ const Select = createReactClass({
 		resetValue: PropTypes.any,            // value to use when you clear the control
 		scrollMenuIntoView: PropTypes.bool,   // boolean to enable the viewport to shift so that the full menu fully visible when engaged
 		searchable: PropTypes.bool,           // whether to enable searching feature or not
+		selectOnBlur: PropTypes.bool,		  // whether to add a value when the component is blurred
 		simpleValue: PropTypes.bool,          // pass the value to onChange as a simple value (legacy pre 1.0 mode), defaults to false
 		style: PropTypes.object,              // optional style to apply to the control
 		tabIndex: PropTypes.string,           // optional tab index of the control
@@ -443,6 +444,10 @@ const Select = createReactClass({
 		if (this.props.onBlur) {
 			this.props.onBlur(event);
 		}
+		if (this.props.selectOnBlur) {
+			event.persist();
+			this.selectFocusedOption(event);
+		}
 		var onBlurredState = {
 			isFocused: false,
 			isOpen: false,
@@ -598,7 +603,8 @@ const Select = createReactClass({
 		}
 	},
 
-	setValue (value) {
+	// event is optional and present to pass to callback as required
+	setValue (value, event) {
 		if (this.props.autoBlur){
 			this.blurInput();
 		}
@@ -610,10 +616,10 @@ const Select = createReactClass({
 		if (this.props.simpleValue && value) {
 			value = this.props.multi ? value.map(i => i[this.props.valueKey]).join(this.props.delimiter) : value[this.props.valueKey];
 		}
-		this.props.onChange(value);
+		this.props.onChange(value, event);
 	},
 
-	selectValue (value) {
+	selectValue (value, event) {
 		//NOTE: update value in the callback to make sure the input value is empty so that there are no styling issues (Chrome had issue otherwise)
 		this.hasScrolledToOption = false;
 		if (this.props.multi) {
@@ -621,7 +627,7 @@ const Select = createReactClass({
 				inputValue: '',
 				focusedIndex: null
 			}, () => {
-				this.addValue(value);
+				this.addValue(value, event);
 			});
 		} else {
 			this.setState({
@@ -629,14 +635,14 @@ const Select = createReactClass({
 				inputValue: '',
 				isPseudoFocused: this.state.isFocused,
 			}, () => {
-				this.setValue(value);
+				this.setValue(value, event);
 			});
 		}
 	},
 
-	addValue (value) {
+	addValue (value, event) {
 		var valueArray = this.getValueArray(this.props.value);
-		this.setValue(valueArray.concat(value));
+		this.setValue(valueArray.concat(value), event);
 	},
 
 	popValue () {
@@ -774,14 +780,14 @@ const Select = createReactClass({
 		return this.state.inputValue;
 	},
 
-	selectFocusedOption () {
+	selectFocusedOption (event) {
 		var options = this.filterOptions(null);
 		var validOption = this._focusedOption && options.length > 0;
 		if (this.props.allowCreate && !validOption) {
-			return this.selectValue(this.state.inputValue);
+			return this.selectValue(this.state.inputValue, event);
 		}
 		if (this._focusedOption) {
-			return this.selectValue(this._focusedOption);
+			return this.selectValue(this._focusedOption, event);
 		}
 	},
 
